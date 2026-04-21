@@ -29,6 +29,14 @@ We refer to this hypothesis informally as the **"Hidden DLinear"** effect.
   - Low-activity intervals
 - **Reduced feature overlap:** Features appear more separable than expected, though further validation is needed
 
+## Why Interpretability Matters (Medical Time Series)
+
+Interpretability is especially critical in domains such as healthcare, where time series models are used to monitor patients, forecast clinical events, and support decision-making.
+
+Applications such as ICU monitoring, ECG/EEG analysis, and continuous glucose tracking require models whose predictions can be understood and trusted by clinicians.
+
+While this repo does not yet evaluate medical datasets, our results about medical time series and interpretability will be added soon.
+
 ## Status
 
 This is an early-stage research project. Results are currently limited to specific datasets and model configurations.  
