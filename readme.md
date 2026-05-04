@@ -1,48 +1,146 @@
 # TS-MechInterp
 
-This project investigates the internal representations of Time Series Transformers (specifically **PatchTST**) using **Sparse Autoencoders (SAEs)**.
+Mechanistic interpretability experiments for Time Series Transformers using Sparse Autoencoders (SAEs).
 
-## Core Idea
+This project investigates whether transformer-based time series forecasting models develop the same kind of dense superposition observed in large language models.
 
-Mechanistic interpretability has focused heavily on language models, but time series models operate under different structural constraints. We study whether their internal representations are similarly complex, or whether they admit simpler structure.
+The primary architecture studied is **PatchTST**.
 
-Our experiments suggest that the FFN activations of PatchTST can be approximated with a highly sparse dictionary (**L0 ≈ 3.1**) while incurring only a small reconstruction penalty (~2% MSE increase, dataset-dependent).
+---
 
-This indicates that, at least in our setting, the model may rely on a small number of dominant, interpretable features rather than highly entangled representations.
+# Core Idea
 
-## Connection to Linear Models
+Mechanistic interpretability has focused heavily on language models, where Sparse Autoencoders frequently uncover highly superposed and densely packed representations.
 
-There has been ongoing discussion about whether Transformer-based models outperform simpler approaches such as **DLinear** in time series forecasting.
+Time series forecasting may be fundamentally different.
 
-Our results provide a possible mechanistic perspective:  
-PatchTST may internally construct a sparse, approximately linear representation of the input signal, which could explain why linear baselines remain competitive.
+Our experiments suggest that competitive forecasting performance can emerge from comparatively sparse and low-complexity internal representations, even in transformer architectures.
 
-We refer to this hypothesis informally as the **"Hidden DLinear"** effect.
+In particular:
 
-## Key Findings
+* Expanding SAE dictionary size produces only minimal downstream forecasting changes
+* Many overcomplete latent dimensions remain inactive
+* Aggressive latent interventions produce surprisingly small forecast perturbations
+* A single transformer layer is often sufficient for strong performance
 
-- **Sparse structure:** FFN activations can be reconstructed with very low L0 sparsity (~3.1)
-- **Low reconstruction penalty:** ~2% increase in MSE (depending on dataset and setup)
-- **Interpretable features:** Identified components corresponding to patterns such as:
-  - Daily cycles
-  - Peak demand periods
-  - Low-activity intervals
-- **Reduced feature overlap:** Features appear more separable than expected, though further validation is needed
+These findings may help explain why simple linear forecasting models remain highly competitive on standard benchmarks.
 
-## Why Interpretability Matters (Medical Time Series)
+---
 
-Interpretability is especially critical in domains such as healthcare, where time series models are used to monitor patients, forecast clinical events, and support decision-making.
+# Main Findings
 
-Applications such as ICU monitoring, ECG/EEG analysis, and continuous glucose tracking require models whose predictions can be understood and trusted by clinicians.
+* Sparse FFN representations in PatchTST
+* Minimal downstream benefit from large SAE dictionary expansion
+* Weak evidence for strong superposition
+* High dead-latent rates in overcomplete dictionaries
+* Small causal effect from dominant latent interventions
+* Competitive forecasting performance with shallow transformer architectures
 
-While this repo does not yet evaluate medical datasets, our results about medical time series and interpretability will be added soon.
+---
 
-## Status
+# Repository Structure
 
-This is an early-stage research project. Results are currently limited to specific datasets and model configurations.  
-A full paper with detailed methodology, ablations, and broader evaluation is in preparation.
+```text
+SAE_Full.ipynb
+    Full SAE training pipeline and interpretability experiments.
 
-## Citation
+Time_series_combined_ECL_Traffic.ipynb
+    Training notebook for Electricity (ECL) and Traffic datasets.
+    Experiments were run on NVIDIA A100 GPUs.
 
-coming soon
-(coming soon via Zenodo DOI for codes, paper via arXiv)
+Time_series_combined_pretraining.ipynb
+    Training notebook for all remaining forecasting datasets.
+    Experiments were run on NVIDIA L4 GPUs.
+
+Pareto_Sweep.ipynb
+    Large-scale SAE sparsity sweep.
+    Trains 256 SAE models across sparsity coefficients and dictionary scales.
+```
+
+---
+
+# Benchmarks
+
+Experiments were conducted on standard long-term forecasting datasets:
+
+* Weather
+* Electricity (ECL)
+* Traffic
+* Exchange
+* ETTh1
+* ETTh2
+* ETTm1
+* ETTm2
+
+Prediction horizons:
+
+* 96
+* 192
+* 336
+* 720
+
+---
+
+# Sparse Autoencoder Setup
+
+SAEs are trained on post-GELU FFN activations extracted from PatchTST.
+
+Dictionary scales explored:
+
+* 0.5×
+* 1.0×
+* 4.0×
+
+Experiments include:
+
+* Reconstruction fidelity analysis
+* Dictionary scaling analysis
+* Dead latent analysis
+* Causal latent intervention experiments
+* Sparsity coefficient sweeps
+
+---
+
+# Why This Matters
+
+There has been ongoing debate about whether transformer complexity is actually necessary for standard time series forecasting benchmarks.
+
+This project approaches that question mechanistically rather than purely through benchmark comparisons.
+
+The results suggest that these datasets may not require the kind of rich compositional representations that drive transformer success in language modeling.
+
+---
+
+# Medical Time Series Motivation
+
+Interpretability becomes especially important in medical settings such as:
+
+* EEG monitoring
+* ECG analysis
+* ICU forecasting
+* Seizure prediction
+* Physiological monitoring
+
+Sparse Autoencoders may provide a pathway toward identifying clinically meaningful latent features inside forecasting models.
+
+Future work will extend these methods toward medical and physiological time series domains.
+
+---
+
+# Status
+
+Research codebase accompanying an active interpretability project.
+
+Code cleanup, documentation improvements, and additional experiments are ongoing.
+
+---
+
+# Citation
+
+```bibtex
+@misc{tsmechinterp2026,
+  title={TS-MechInterp},
+  author={Anonymous Authors},
+  year={2026}
+}
+```
