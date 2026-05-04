@@ -137,10 +137,4 @@ Code cleanup, documentation improvements, and additional experiments are ongoing
 
 # Citation
 
-```bibtex
-@misc{tsmechinterp2026,
-  title={TS-MechInterp},
-  author={Anonymous Authors},
-  year={2026}
-}
-```
+Coming soon
